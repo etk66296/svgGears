@@ -4,13 +4,38 @@
 
         <title>svg gears</title>
 
-        <script type="text/javascript" src="labUtils.js"></script>
-        <script type="text/javascript" src="main.js"></script>
+        <script type="text/javascript" src="userForm.js"></script>
+        <script type="text/javascript" src="gear.js"></script>
+        <script type="text/javascript" src="svg.js"></script>
 
         <script type="text/javascript">
             window.onload = () => {
 
-              init(document.getElementById('mainContainer'))
+              let formContainer = document.getElementById('mainContainer')
+              let svgContainer = document.getElementById('svgMainContainer')
+
+              let modulInput = new TextInput(formContainer, 'Modul m: ')
+              let rbinput = new TextInput(formContainer, 'rb: ')
+
+              let myGear = new Gear(svgContainer)
+              myGear.evolventeOpen(0.0, 10)
+              myGear.evolventeClose(0.0, 10)
+              myGear.toSvg(svgContainer, 1)
+
+              // myGear.translate(800.0, 800.0)
+              let rotationCenter = { x: 800.0, y: 800.0 }
+              let angle = Math.PI * 0.5
+
+              // let pos = { x: 0.0,  y: 0.0 }
+              // let angle = 0.010
+              window.setInterval(() => {
+
+                // myGear.translate(pos.x, pos.y)
+                // pos.x += 1
+                myGear.translateRotate(angle, rotationCenter)
+                angle += 1
+
+              }, 100)
 
 
             }
@@ -20,10 +45,14 @@
 
     <body style="background-color: #392d4e;">
 
-        <div id="mainContainer">
+        <div id="mainContainer"></div>
+        <div style="margin: 30px; background-color: rgb(20, 20, 80)">
+          <svg id="svgMainContainer" width="1600" height="1600">
 
-          <svg id="svgMainContainer" width="1024" height="1024"></svg>
+            <line x1="0" y1="800" x2="1600" y2="800" style="stroke:rgb(255,0,0);stroke-width:1" />
+            <line x1="800" y1="0" x2="800" y2="1600" style="stroke:rgb(255,0,0);stroke-width:1" />
 
+          </svg>
 
         </div>
 

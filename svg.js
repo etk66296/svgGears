@@ -35,7 +35,7 @@ class SvgLine {
     
   }
 
-  setStrokeColor(color = 'rgb(0, 0, 0)') {
+  setStrokeColor(color = 'rgb(255, 255, 255)') {
 
     this.displayElement.setAttribute("stroke", color)
 
@@ -46,16 +46,5 @@ class SvgLine {
     this.displayElement.setAttribute("stroke-width", width)
 
   }
-
-
-}
-
-
-let init = (parentHtmlElement) => {
-
-    let svgMainContainer = document.getElementById("svgMainContainer")
-    
-    let aLine = new SvgLine(svgMainContainer)
-
 
 }
