@@ -8,7 +8,7 @@ class TextInput {
     this.label.style.color = 'rgb(255, 255, 255)'
     this.label.style.marginRight = '5px'
     this.label.style.textAlign = 'right'
-    this.label.style.width = '100px'
+    this.label.style.width = '250px'
     this.label.innerText = label
     this.label.style.display = 'inline-block'
     this.input = document.createElementNS("http://www.w3.org/1999/xhtml", 'input')
@@ -18,7 +18,14 @@ class TextInput {
     this.labelInputContainer.appendChild(this.input)
     this.parentElement.appendChild(this.labelInputContainer)
     
+  }
 
+  setValue(value) {
+    this.input.value = value
+  }
+
+  getValue() {
+    return Number(this.input.value)
   }
 
 }
