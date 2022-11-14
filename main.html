@@ -6,72 +6,84 @@
 
         <script type="text/javascript" src="userForm.js"></script>
         <script type="text/javascript" src="gear.js"></script>
+        <script type="text/javascript" src="involuteGear.js"></script>
         <script type="text/javascript" src="svg.js"></script>
 
         <script type="text/javascript">
             window.onload = () => {
 
-              let formContainer = document.getElementById('mainContainer')
               let svgContainer = document.getElementById('svgMainContainer')
+              let involuteGearA = new InvoluteGear(svgContainer)
+              let involuteGearB = new InvoluteGear(svgContainer)
+              involuteGearA.calculate()
+              involuteGearA.draw()
+              involuteGearB.calculate()
+              involuteGearB.draw()
 
-              let modulInput = new TextInput(formContainer, 'Modul m: ')
-              modulInput.setValue(3)
-              let zInput = new TextInput(formContainer, 'Zähnezahl z: ')
-              zInput.setValue(36)
-              let alphaNullInput = new TextInput(formContainer, 'Normaleingriffswinkel a0: ')
-              alphaNullInput.setValue(20.0)
-              let dInput = new TextInput(formContainer, 'Durchmesser d: ')
-              let dkInput = new TextInput(formContainer, 'Durchmesser dk: ')
-              let dfInput = new TextInput(formContainer, 'Durchmesser df: ')
+              // let formContainer = document.getElementById('mainContainer')
 
-              let calulate_d = () => {
+              // let modulInput = new TextInput(formContainer, 'Modul m: ')
+              // modulInput.setValue(3)
+              // let zInput = new TextInput(formContainer, 'Zähnezahl z: ')
+              // zInput.setValue(36)
+              // let alphaNullInput = new TextInput(formContainer, 'Normaleingriffswinkel a0: ')
+              // alphaNullInput.setValue(20.0)
+              // let dInput = new TextInput(formContainer, 'Durchmesser d: ')
+              // let dkInput = new TextInput(formContainer, 'Durchmesser dk: ')
+              // let dfInput = new TextInput(formContainer, 'Durchmesser df: ')
 
-                dInput.setValue(zInput.getValue() * modulInput.getValue())
+              // let calulate_d = () => {
 
-              }
+              //   dInput.setValue(zInput.getValue() * modulInput.getValue())
 
-              let calulate_dk = () => {
+              // }
 
-                dkInput.setValue((zInput.getValue() - 2.5) * modulInput.getValue())
+              // let calulate_dk = () => {
 
-              }
+              //   dkInput.setValue((zInput.getValue() - 2.5) * modulInput.getValue())
+
+              // }
               
-              let calulate_df = () => {
+              // let calulate_df = () => {
 
-                dfInput.setValue((zInput.getValue() + 2) * modulInput.getValue())
+              //   dfInput.setValue((zInput.getValue() + 2) * modulInput.getValue())
 
-              }
+              // }
 
-              formContainer.addEventListener('input', () => {
+              // formContainer.addEventListener('input', () => {
                   
-                calulate_d()
-                calulate_dk()
-                calulate_df()
+              //   calulate_d()
+              //   calulate_dk()
+              //   calulate_df()
                 
 
-              })
+              // })
 
-              calulate_d()
-              calulate_dk()
-              calulate_df()
+              // calulate_d()
+              // calulate_dk()
+              // calulate_df()
 
-              let myGear = new Gear(svgContainer)
-              myGear.evolventeOpen(0.0, 10)
-              myGear.evolventeClose(0.0, 10)
-              myGear.toSvg(svgContainer, 1)
+              // let myGear = new Gear(svgContainer)
+              // myGear.evolventeOpen(0.0, 10)
+              // myGear.evolventeClose(0.0, 10)
+              // myGear.toSvg(svgContainer, 1)
 
-              // myGear.translate(800.0, 800.0)
-              let rotationCenter = { x: 400.0, y: 400.0 }
-              let angle = Math.PI * 0.5
+              // // myGear.translate(800.0, 800.0)
+              let rotationCenterA = { x: 400.0, y: 400.0 }
+              let rotationCenterB = { x: 183.0, y: 400.0 }
+              // let angle = Math.PI * 0.5
 
-              // let pos = { x: 0.0,  y: 0.0 }
-              // let angle = 0.010
+              // // let pos = { x: 0.0,  y: 0.0 }
+              let angleA = 0.00
+              let angleB = -1.5
               window.setInterval(() => {
 
                 // myGear.translate(pos.x, pos.y)
                 // pos.x += 1
-                myGear.translateRotate(angle, rotationCenter)
-                angle += 1
+                involuteGearA.translateRotate(angleA, rotationCenterA)
+                involuteGearB.translateRotate(angleB, rotationCenterB)
+                angleA += 1
+                angleB -= 1
 
               }, 100)
 
@@ -91,7 +103,7 @@
             <line x1="400" y1="0" x2="400" y2="800" style="stroke:rgb(255,0,0);stroke-width:1" />
 
 
-            <path d="M 80 80 A 45 45, 0, 0, 1, 125 125 L 125 80 Z" fill="green"/>
+            <!-- <path d="M 80 80 A 45 45, 0, 0, 1, 125 125 L 125 80 Z" fill="green"/> -->
 
           </svg>
 
