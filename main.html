@@ -5,8 +5,8 @@
         <title>svg gears</title>
 
         <script type="text/javascript" src="userForm.js"></script>
-        <script type="text/javascript" src="gear.js"></script>
         <script type="text/javascript" src="involuteGear.js"></script>
+        <script type="text/javascript" src="innerInvoluteGear.js"></script>
         <script type="text/javascript" src="svg.js"></script>
 
         <script type="text/javascript">
@@ -15,10 +15,26 @@
               let svgContainer = document.getElementById('svgMainContainer')
               let involuteGearA = new InvoluteGear(svgContainer)
               let involuteGearB = new InvoluteGear(svgContainer)
+              let innerInvoluteGearA = new InnerInvoluteGear(svgContainer)
+              involuteGearB.rotationDirection = -1
+              involuteGearB.rotOffset = -1.65
               involuteGearA.calculate()
               involuteGearA.draw()
               involuteGearB.calculate()
               involuteGearB.draw()
+
+              let angle = Math.PI * 0.5
+              let gearDistance = (involuteGearA.z + involuteGearB.z) * involuteGearA.m
+              let rotationCenterA = { x: 500.0, y: 400.0 }
+              let rotationCenterB = { x: 500.0 + gearDistance, y: 400.0 }
+              involuteGearA.translateRotate(angle, rotationCenterA)
+              involuteGearB.translateRotate(angle, rotationCenterB)
+
+              innerInvoluteGearA.calculate()
+              innerInvoluteGearA.draw()
+              innerInvoluteGearA.translateRotate(0, { x: 400, y: 400 })
+
+              
 
               // let formContainer = document.getElementById('mainContainer')
 
@@ -69,23 +85,21 @@
               // myGear.toSvg(svgContainer, 1)
 
               // // myGear.translate(800.0, 800.0)
-              let rotationCenterA = { x: 400.0, y: 400.0 }
-              let rotationCenterB = { x: 183.0, y: 400.0 }
+              // let rotationCenterA = { x: 500.0, y: 400.0 }
+              // let rotationCenterB = { x: 500.0 + gearDistance, y: 400.0 }
               // let angle = Math.PI * 0.5
 
               // // let pos = { x: 0.0,  y: 0.0 }
-              let angleA = 0.00
-              let angleB = -1.5
-              window.setInterval(() => {
+              // let angle = 0
+              // window.setInterval(() => {
 
                 // myGear.translate(pos.x, pos.y)
                 // pos.x += 1
-                involuteGearA.translateRotate(angleA, rotationCenterA)
-                involuteGearB.translateRotate(angleB, rotationCenterB)
-                angleA += 1
-                angleB -= 1
+              //   involuteGearA.translateRotate(angle, rotationCenterA)
+              //   involuteGearB.translateRotate(angle, rotationCenterB)
+              //   angle += 1
 
-              }, 100)
+              // }, 100)
 
 
             }
@@ -93,15 +107,14 @@
     
     </head>
 
-    <body style="background-color: #392d4e;">
+    <body style="background-color: rgb(117, 180, 252);">
 
         <div id="mainContainer"></div>
-        <div style="margin: 30px; background-color: rgb(20, 20, 80)">
-          <svg id="svgMainContainer" width="800" height="800">
+        <div style="margin: 30px; background-color: rgb(117, 180, 252)">
+          <svg id="svgMainContainer" width="1600" height="800">
 
-            <line x1="0" y1="400" x2="800" y2="400" style="stroke:rgb(255,0,0);stroke-width:1" />
-            <line x1="400" y1="0" x2="400" y2="800" style="stroke:rgb(255,0,0);stroke-width:1" />
-
+            <line x1="0" y1="400" x2="1600" y2="400" style="stroke:rgb(255, 255, 255);stroke-width:1" />
+            <line x1="500" y1="0" x2="500" y2="800" style="stroke:rgb(255, 255, 255);stroke-width:1" />
 
             <!-- <path d="M 80 80 A 45 45, 0, 0, 1, 125 125 L 125 80 Z" fill="green"/> -->
 

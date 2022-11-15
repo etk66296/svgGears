@@ -1,4 +1,4 @@
-class InvoluteGear {
+class InnerInvoluteGear {
 
   constructor(parent) {
 
@@ -6,6 +6,7 @@ class InvoluteGear {
     this.psi = Math.PI / 4
 
     this.points = []
+    this.outlinePoints = []
 
     this.svg = []
 
@@ -13,12 +14,12 @@ class InvoluteGear {
     this.parent = parent
     this.parent.appendChild(this.displayElement)
 
-    this.resolution = 0.25
+    this.resolution = 0.75
 
     this.rotationDirection = 1
     this.rotOffset = 0.0
 
-    this.z = 12
+    this.z = 36
     this.m = 3
     this.shift = (2 * Math.PI) / this.z
     this.c = 0.162 * this.m // Zahnkopfspiel
@@ -33,7 +34,9 @@ class InvoluteGear {
     this.dk = this.m * (this.z + 2) // Kopfkreisdurchmesser
     this.d0 = this.m * this.z // Teilkreisdurchmesser
     this.df = this.m * (this.z - 2 ) - 2 * this.c // Fusskreis
-    this.db = this.d0 * Math.cos(this.a0) // Grundkreis
+    this.db = this.d0 * Math.cos(this.a0) + this.z * 0.1 // Grundkreis
+
+    this.dOutline = this.dk + 8 * this.m
     
     this.x = 0.0 // Profilverschiebungsfaktor
     this.s0 = this.m * (Math.PI * 0.5 + 2 * this.x * Math.tan(this.a0)) // Zahndicke
@@ -70,7 +73,7 @@ class InvoluteGear {
 
   calculate() {
 
-    let d = this.db
+    let d = 0.0
     let x = 0.0
     let y = 0.0
     let a = 0.0
@@ -97,10 +100,17 @@ class InvoluteGear {
   
       }
 
-      s = this.toothWidthOf(this.dk, a) / (this.dk * 0.5)
-     
-      x = this.dk * Math.cos(this.invUp(a) + s + this.shift * i)
-      y = this.dk * Math.sin(this.invUp(a) + s + this.shift * i)
+      d = this.dk
+
+      x = d * Math.cos(this.invUp(a) + s + this.shift * i)
+      y = d * Math.sin(this.invUp(a) + s + this.shift * i)
+
+      this.points.push({ x: x, y: y })
+
+      s = this.toothWidthOf(d, a) / (d * 0.5)
+
+      x = d * Math.cos(this.invUp(a) + s + this.shift * i)
+      y = d * Math.sin(this.invUp(a) + s + this.shift * i)
 
       this.points.push({ x: x, y: y })
 
@@ -117,17 +127,34 @@ class InvoluteGear {
   
       }
 
-      x = this.df * Math.cos(this.invUp(a) + sb + this.shift * i)
-      y = this.df * Math.sin(this.invUp(a) + sb + this.shift * i)
+      d = this.db
+
+      a = Math.acos((this.d0 / d) * Math.cos(this.a0))
+
+      x = d * Math.cos(this.invUp(a) + sb + this.shift * i)
+      y = d * Math.sin(this.invUp(a) + sb + this.shift * i)
 
       this.points.push({ x: x, y: y })
 
-      x = this.df * Math.cos(this.invUp(a) + this.shift * i + this.shift)
-      y = this.df * Math.sin(this.invUp(a) + this.shift * i + this.shift)
+      x = d * Math.cos(this.invUp(a) + this.shift * i + this.shift)
+      y = d * Math.sin(this.invUp(a) + this.shift * i + this.shift)
 
       this.points.push({ x: x, y: y })
 
     }
+
+    for(let i = 0; i <= (2 * Math.PI); i += (this.resolution * 0.1)) {
+
+      x = this.dOutline * Math.cos(i)
+      y = this.dOutline * Math.sin(i)
+
+      this.outlinePoints.push({ x: x, y: y })
+
+    }
+
+    x = this.dOutline * Math.cos(0)
+    y = this.dOutline * Math.sin(0)
+    this.outlinePoints.push({ x: x, y: y })
 
   }
 
@@ -140,6 +167,20 @@ class InvoluteGear {
         let line  = new SvgLine(this.displayElement)
         line.setLineStart(this.points[i].x, this.points[i].y)
         line.setLineEnd(this.points[i + 1].x, this.points[i + 1].y)
+        line.setStrokeColor('#000000')
+        line.setStrokeWidth(1)
+
+      }
+
+    } 
+
+    for(let i = 0; i < this.outlinePoints.length; i++) {
+
+      if(this.outlinePoints[i + 1] != undefined) {
+
+        let line  = new SvgLine(this.displayElement)
+        line.setLineStart(this.outlinePoints[i].x, this.outlinePoints[i].y)
+        line.setLineEnd(this.outlinePoints[i + 1].x, this.outlinePoints[i + 1].y)
         line.setStrokeColor('#000000')
         line.setStrokeWidth(1)
 
