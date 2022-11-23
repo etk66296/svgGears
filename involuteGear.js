@@ -17,8 +17,9 @@ class InvoluteGear {
 
     this.rotationDirection = 1
     this.rotOffset = 0.0
+    this.centerPosition = { x: 0, y: 0 }
 
-    this.z = 12
+    this.z = 36
     this.m = 3
     this.shift = (2 * Math.PI) / this.z
     this.c = 0.162 * this.m // Zahnkopfspiel
@@ -30,12 +31,12 @@ class InvoluteGear {
     this.p0 = this.m * Math.PI / this.z // Umfangsteilung
     this.pb = Math.PI * this.m * Math.cos(this.a0)
     
-    this.dk = this.m * (this.z + 2) // Kopfkreisdurchmesser
-    this.d0 = this.m * this.z // Teilkreisdurchmesser
-    this.df = this.m * (this.z - 2 ) - 2 * this.c // Fusskreis
-    this.db = this.d0 * Math.cos(this.a0) // Grundkreis
-    
     this.x = 0.0 // Profilverschiebungsfaktor
+    this.dk = this.m * (this.z + 2 * this.x + 2) // Kopfkreisdurchmesser
+    this.d0 = this.m * this.z // Teilkreisdurchmesser
+    this.db = this.d0 * Math.cos(this.a0) // Grundkreis
+    this.df = this.m * (this.z + 2 * this.x - 2 ) - 2 * this.c // Fusskreis
+    
     this.s0 = this.m * (Math.PI * 0.5 + 2 * this.x * Math.tan(this.a0)) // Zahndicke
 
     /*
@@ -67,6 +68,31 @@ class InvoluteGear {
     return d * ((this.s0 / this.d0) + this.invUp(this.a0) - this.invUp(alpha))
 
   }
+
+  setZMA0(z, m, a0) {
+
+    this.z = z
+    this.m = m
+    this.shift = (2 * Math.PI) / this.z
+    this.c = 0.162 * this.m// Zahnkopfspiel
+    this.hk = this.m // Zahnkopfhöhe
+    this.hf = this.m + this.c // Zahnfusshöhe
+    this.h = this.hk + this.hf // Zahnhöhe
+    
+    this.a0 = (Math.PI / 180) * a0 // alpha0 = 20°
+    this.p0 = this.m * Math.PI / this.z // Umfangsteilung
+    this.pb = Math.PI * this.m * Math.cos(this.a0)
+    
+    this.x = 0.0 // Profilverschiebungsfaktor
+    this.dk = this.m * (this.z + 2 * this.x + 2) // Kopfkreisdurchmesser
+    this.d0 = this.m * this.z // Teilkreisdurchmesser
+    this.db = this.d0 * Math.cos(this.a0) // Grundkreis
+    this.df = this.m * (this.z + 2 * this.x - 2 ) - 2 * this.c // Fusskreis
+    
+    this.s0 = this.m * (Math.PI * 0.5 + 2 * this.x * Math.tan(this.a0)) // Zahndicke
+
+  }
+
 
   calculate() {
 
@@ -111,7 +137,8 @@ class InvoluteGear {
         x = d * Math.cos(this.invDown(a) + sb + this.shift * i)
         y = d * Math.sin(this.invDown(a) + sb + this.shift * i)
   
-        this.points.push({ x: x, y: y })
+        this.points.
+        push({ x: x, y: y })
   
         d -= this.resolution
   
@@ -153,6 +180,10 @@ class InvoluteGear {
 
     this.displayElement.setAttribute('transform',  `translate(${String(pos.x)}, ${String(pos.y)}) rotate(${String(angle * this.rotationDirection + this.rotOffset)})`)
 
+  }
+
+  setPos() {
+    this.displayElement.setAttribute('transform',  `translate(${String(this.centerPosition.x)}, ${String(this.centerPosition.y)})`)
   }
 
 

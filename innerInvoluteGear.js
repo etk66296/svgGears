@@ -19,7 +19,7 @@ class InnerInvoluteGear {
     this.rotationDirection = 1
     this.rotOffset = 0.0
 
-    this.z = 36
+    this.z = 96
     this.m = 3
     this.shift = (2 * Math.PI) / this.z
     this.c = 0.162 * this.m // Zahnkopfspiel
