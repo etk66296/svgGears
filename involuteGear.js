@@ -6,6 +6,7 @@ class InvoluteGear {
     this.psi = Math.PI / 4
 
     this.points = []
+    this.edgePoints = []
 
     this.svg = []
 
@@ -20,7 +21,7 @@ class InvoluteGear {
     this.centerPosition = { x: 0, y: 0 }
 
     this.z = 36
-    this.m = 3
+    this.m = 10
     this.shift = (2 * Math.PI) / this.z
     this.c = 0.162 * this.m // Zahnkopfspiel
     this.hk = this.m // Zahnkopfhöhe
@@ -38,6 +39,15 @@ class InvoluteGear {
     this.df = this.m * (this.z + 2 * this.x - 2 ) - 2 * this.c // Fusskreis
     
     this.s0 = this.m * (Math.PI * 0.5 + 2 * this.x * Math.tan(this.a0)) // Zahndicke
+    this.sb = this.toothWidthOf(this.db, 0.0) / (this.db * 0.5)
+
+    this.toothStart  = { x: 0.0, y: 0.0 }
+    this.toothCenter  = { x: 0.0, y: 0.0 }
+    this.toothEnd  = { x: 0.0, y: 0.0 }
+    this.gapCenter = { x: 0.0, y: 0.0 }
+    this.gapEnd = { x: 0.0, y: 0.0 }
+    this.toothCenterAngle = 0.0
+    this.gapCenterAngle = 0.0
 
     /*
         _______________ ___ _____________ Kopfkreis dk
@@ -90,69 +100,121 @@ class InvoluteGear {
     this.df = this.m * (this.z + 2 * this.x - 2 ) - 2 * this.c // Fusskreis
     
     this.s0 = this.m * (Math.PI * 0.5 + 2 * this.x * Math.tan(this.a0)) // Zahndicke
+    this.sb = this.toothWidthOf(this.db, 0.0) / (this.db * 0.5)
 
   }
 
 
   calculate() {
 
-    let d = this.db
+    let r = this.db * 0.5
     let x = 0.0
     let y = 0.0
     let a = 0.0
     let s = 0.0
-    let sb = this.toothWidthOf(this.db, a) / (this.db * 0.5)
 
     // for(let i = 0; i <= 0; i += 1) {
-    for(let i = 0; i <= this.z; i += 1) {
+    for(let i = 0; i < this.z; i += 1) {
 
-      d = this.db
+      r = this.db * 0.5
       a = 0.0
       s = 0.0
 
-      while(d < this.dk) {
+      
 
-        a = Math.acos((this.d0 / d) * Math.cos(this.a0))
+      if(i == 0) {
+
+        x = r * Math.cos(this.invUp(a) + this.shift * i)
+        y = r * Math.sin(this.invUp(a) + this.shift * i)
   
-        x = d * Math.cos(this.invUp(a) + this.shift * i)
-        y = d * Math.sin(this.invUp(a) + this.shift * i)
+        this.points.push({ x: x, y: y })
+        this.toothStart.x = x
+        this.toothStart.y = y
+
+      }
+
+      while(r < (this.dk * 0.5)) {
+
+        a = Math.acos((this.d0 / (2 * r)) * Math.cos(this.a0))
+  
+        x = r * Math.cos(this.invUp(a) + this.shift * i)
+        y = r * Math.sin(this.invUp(a) + this.shift * i)
   
         this.points.push({ x: x, y: y })
   
-        d += this.resolution
+        r += this.resolution
   
       }
 
       s = this.toothWidthOf(this.dk, a) / (this.dk * 0.5)
      
-      x = this.dk * Math.cos(this.invUp(a) + s + this.shift * i)
-      y = this.dk * Math.sin(this.invUp(a) + s + this.shift * i)
+      x = 0.5 * this.dk * Math.cos(this.invUp(a) + s * 0.5 + this.shift * i)
+      y = 0.5 * this.dk * Math.sin(this.invUp(a) + s * 0.5 + this.shift * i)
 
       this.points.push({ x: x, y: y })
 
-      while(d > this.db) {
+      if(i == 0) {
+        this.toothCenter.x = x
+        this.toothCenter.y = y
+      }
 
-        a = Math.acos((this.d0 / d) * Math.cos(this.a0))
+      x = 0.5 * this.dk * Math.cos(this.invUp(a) + s + this.shift * i)
+      y = 0.5 * this.dk * Math.sin(this.invUp(a) + s + this.shift * i)
+
+      this.points.push({ x: x, y: y })
+
+      while(r > (this.db * 0.5)) {
+
+        a = Math.acos((this.d0 / (2 * r)) * Math.cos(this.a0))
   
-        x = d * Math.cos(this.invDown(a) + sb + this.shift * i)
-        y = d * Math.sin(this.invDown(a) + sb + this.shift * i)
+        x = r * Math.cos(this.invDown(a) + this.sb + this.shift * i)
+        y = r * Math.sin(this.invDown(a) + this.sb + this.shift * i)
   
         this.points.
         push({ x: x, y: y })
   
-        d -= this.resolution
+        r -= this.resolution
   
       }
 
-      x = this.df * Math.cos(this.invUp(a) + sb + this.shift * i)
-      y = this.df * Math.sin(this.invUp(a) + sb + this.shift * i)
+      x = 0.5 * this.df * Math.cos(this.invDown(a) + this.sb + this.shift * i)
+      y = 0.5 * this.df * Math.sin(this.invDown(a) + this.sb + this.shift * i)
 
       this.points.push({ x: x, y: y })
 
-      x = this.df * Math.cos(this.invUp(a) + this.shift * i + this.shift)
-      y = this.df * Math.sin(this.invUp(a) + this.shift * i + this.shift)
+      if(i == 0) {
+        this.toothEnd.x = x
+        this.toothEnd.y = y
+      }
+
+      x = 0.5 * this.df * Math.cos(this.invUp(a) + this.shift * i + this.shift)
+      y = 0.5 * this.df * Math.sin(this.invUp(a) + this.shift * i + this.shift)
 
       this.points.push({ x: x, y: y })
+
+      if(i == 0) {
+
+        this.gapEnd.x = x
+        this.gapEnd.y = y
+
+        let xa = this.points[this.points.length - 2].x
+        let ya = this.points[this.points.length - 2].y
+
+        let xb = this.points[this.points.length - 1].x
+        let yb = this.points[this.points.length - 1].y
+
+        this.gapCenter.x = (xa + xb) * 0.5
+        this.gapCenter.y = (ya + yb) * 0.5
+
+        this.toothCenterAngle = Math.acos((this.toothStart.x * this.toothCenter.x + this.toothStart.y * this.toothCenter.y) / (Math.sqrt(this.toothStart.x * this.toothStart.x + this.toothStart.y * this.toothStart.y) * Math.sqrt(this.toothCenter.x * this.toothCenter.x + this.toothCenter.y * this.toothCenter.y)))
+
+        this.toothCenterAngle = 360 * this.toothCenterAngle / (Math.PI * 2)
+
+        this.gapCenterAngle = Math.acos((this.gapCenter.x * this.gapEnd.x + this.gapCenter.y * this.gapEnd.y) / (Math.sqrt(this.gapCenter.x * this.gapCenter.x + this.gapCenter.y * this.gapCenter.y) * Math.sqrt(this.gapEnd.x * this.gapEnd.x + this.gapEnd.y * this.gapEnd.y)))
+
+        this.gapCenterAngle = 360 * this.gapCenterAngle / (Math.PI * 2)
+
+      }
 
     }
 
@@ -178,12 +240,37 @@ class InvoluteGear {
 
   translateRotate(angle, pos) {
 
-    this.displayElement.setAttribute('transform',  `translate(${String(pos.x)}, ${String(pos.y)}) rotate(${String(angle * this.rotationDirection + this.rotOffset)})`)
+    // this.displayElement.setAttribute('transform', `translate(${String(pos.x)}, ${String(pos.y)}) rotate(${String(angle * this.rotationDirection + this.rotOffset)})`)
+
+  }
+
+  rotateS0() {
+
+    this.displayElement.setAttribute('transform', `translate(${String(this.centerPosition.x)}, ${String(this.centerPosition.y)}) rotate(${this.gapCenterAngle})`)
+
+
+    console.log(this.toothStart)
+    console.log(this.toothCenter)
+    console.log(this.toothEnd)
+    console.log(this.gapCenter)
+    console.log(this.gapEnd)
+    console.log(this.toothCenterAngle)
+    console.log(this.gapCenterAngle)
+    // let rot = 0.0
+    // let roDelta = (360 / this.z / 4)
+    // window.setInterval(() => {
+      
+    //   this.displayElement.setAttribute('transform', `translate(${String(this.centerPosition.x)}, ${String(this.centerPosition.y)}) rotate(${rot})`)
+    //   rot += 5
+
+    // }, 100)
 
   }
 
   setPos() {
-    this.displayElement.setAttribute('transform',  `translate(${String(this.centerPosition.x)}, ${String(this.centerPosition.y)})`)
+    console.log(((-1) * 360 / this.z) * 0.5)
+    this.displayElement.setAttribute('transform', `translate(${String(this.centerPosition.x)}, ${String(this.centerPosition.y)}) rotate(${(-1) * this.toothCenterAngle})`)
+    // this.displayElement.setAttribute('transform', `translate(${String(this.centerPosition.x)}, ${String(this.centerPosition.y)}) rotate(${0})`)
   }
 
 

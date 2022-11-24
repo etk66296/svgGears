@@ -29,6 +29,8 @@ class Transmission {
 
     }
 
+    this.centerY = 0.0
+
     this.svgDisplayElement = document.createElementNS("http://www.w3.org/2000/svg", 'g')
     this.parentSvgElement.append(this.svgDisplayElement)
     this.gears = []
@@ -75,7 +77,8 @@ class Transmission {
 
   inverseInv(a) {
 
-    return Math.cbrt(3 * this.inv(a)) - 0.4 * this.inv(a)
+    return Math.pow(a, 1 / 3) / (0.693357 + 0.192484 * Math.pow(a, 2 / 3))
+    // return Math.cbrt(3 * this.inv(a)) - 0.4 * this.inv(a)
 
   }
 
@@ -94,18 +97,19 @@ class Transmission {
 
       let alphaB = this.alphaB(newGear, lastGear)
 
-      console.log(newGear.z, lastGear.z)
       let gap = newGear.m * (newGear.z + lastGear.z) * Math.cos(newGear.a0) / (2 * Math.cos(alphaB))
 
       newGear.centerPosition.x = lastGear.centerPosition.x + gap
       newGear.centerPosition.y = lastGear.centerPosition.y
-      newGear.setPos()
+      // newGear.setPos()
+      newGear.rotateS0()
       
     } else {
 
       let newGear = this.gears[this.gears.length - 1]
-      newGear.centerPosition.x = newGear.dk
-      newGear.centerPosition.y = this.parentSvgElement.clientHeight * 0.5 - newGear.dk
+      newGear.centerPosition.x = newGear.dk * 0.5
+      newGear.centerPosition.y = this.parentSvgElement.clientHeight * 0.5 - (newGear.dk * 0.5)
+      this.centerY = newGear.centerPosition.y
       newGear.setPos()
 
     }
@@ -159,7 +163,7 @@ class Transmission {
 
     this.inputModulHtmlElem = this.newHtmlElem('input')
     this.inputModulHtmlElem.style.display = 'inline-block'
-    this.inputModulHtmlElem.value = '3'
+    this.inputModulHtmlElem.value = '10'
     this.inputModulHtmlElem.innerText = 'modul'
     this.modulContainerHtmlElem.append(this.inputModulHtmlElem)
     this.formContainer.append(this.modulContainerHtmlElem)
@@ -208,6 +212,13 @@ class Transmission {
   }
 
   draw() {
+
+    this.centerY = this.parentSvgElement.clientHeight * 0.5 - (this.gears[this.gears.length - 1].dk * 0.5) 
+    let line  = new SvgLine(this.parentSvgElement)
+    line.setLineStart(0.0, this.centerY)
+    line.setLineEnd(this.parentSvgElement.clientWidth, this.centerY)
+    line.setStrokeColor('#000000')
+    line.setStrokeWidth(1)
 
     this.gears[this.gears.length - 1].draw()
 
