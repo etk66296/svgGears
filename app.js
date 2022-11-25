@@ -24,6 +24,12 @@ var app = {
     }
     menuBar.append(newTransmissionButton)
 
+    window.setInterval(() => {
+
+      transmission.update()
+
+    }, 100)
+
     
 
     

@@ -39,7 +39,7 @@ class Transmission {
     this.callbackOnAddGearButton = () => {
 
       let newGear = new InvoluteGear(this.svgDisplayElement)
-      newGear.setZMA0(Number(this.inputZHtmlElem.value),
+      newGear.setInitialValues(Number(this.inputZHtmlElem.value),
         Number(this.inputModulHtmlElem.value),
         Number(this.inputA0HtmlElem.value)
       )
@@ -48,7 +48,7 @@ class Transmission {
       this.gears.push(newGear)
 
       this.callbackOnCloseFormButton()
-      this.draw()
+      newGear.draw()
 
       this.distance()
 
@@ -90,7 +90,14 @@ class Transmission {
   
   distance() {
 
-    if(this.gears.length > 1) {
+    if(this.gears.length == 1) {
+
+      let newGear = this.gears[this.gears.length - 1]
+      newGear.centerPosition.x = newGear.dk * 0.5
+      newGear.centerPosition.y = this.parentSvgElement.clientHeight * 0.5 - (newGear.dk * 0.5)
+      this.centerY = newGear.centerPosition.y
+
+    } else {
 
       let newGear = this.gears[this.gears.length - 1]
       let lastGear = this.gears[this.gears.length - 2]
@@ -101,16 +108,18 @@ class Transmission {
 
       newGear.centerPosition.x = lastGear.centerPosition.x + gap
       newGear.centerPosition.y = lastGear.centerPosition.y
-      // newGear.setPos()
-      newGear.rotateS0()
+
+    }
+
+    if((this.gears.length % 2) == 0) {
+
+      this.gears[this.gears.length - 1].rotDir = 1
+      this.gears[this.gears.length - 1].setPosEven()
       
     } else {
 
-      let newGear = this.gears[this.gears.length - 1]
-      newGear.centerPosition.x = newGear.dk * 0.5
-      newGear.centerPosition.y = this.parentSvgElement.clientHeight * 0.5 - (newGear.dk * 0.5)
-      this.centerY = newGear.centerPosition.y
-      newGear.setPos()
+      this.gears[this.gears.length - 1].rotDir = -1
+      this.gears[this.gears.length - 1].setPosOdd()
 
     }
 
@@ -211,22 +220,19 @@ class Transmission {
 
   }
 
-  draw() {
-
-    this.centerY = this.parentSvgElement.clientHeight * 0.5 - (this.gears[this.gears.length - 1].dk * 0.5) 
-    let line  = new SvgLine(this.parentSvgElement)
-    line.setLineStart(0.0, this.centerY)
-    line.setLineEnd(this.parentSvgElement.clientWidth, this.centerY)
-    line.setStrokeColor('#000000')
-    line.setStrokeWidth(1)
-
-    this.gears[this.gears.length - 1].draw()
-
-  }
-
   update() {
 
-  }
+    this.gears.forEach((gear, index) => {
 
+      gear.update()
+      if((index % 2) == 0) {
+        gear.setPosEven()
+      } else {
+        gear.setPosOdd()
+      }
+
+    })
+
+  }
 
 }

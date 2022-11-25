@@ -49,6 +49,10 @@ class InvoluteGear {
     this.toothCenterAngle = 0.0
     this.gapCenterAngle = 0.0
 
+    this.rotDir = 1
+    this.rotationSpeed = 1
+    this.rotationAngle = 0
+
     /*
         _______________ ___ _____________ Kopfkreis dk
         hk             /   \
@@ -79,12 +83,12 @@ class InvoluteGear {
 
   }
 
-  setZMA0(z, m, a0) {
+  setInitialValues(z, m, a0) {
 
     this.z = z
     this.m = m
     this.shift = (2 * Math.PI) / this.z
-    this.c = 0.162 * this.m// Zahnkopfspiel
+    this.c = 0.162 * this.m // Zahnkopfspiel
     this.hk = this.m // Zahnkopfhöhe
     this.hf = this.m + this.c // Zahnfusshöhe
     this.h = this.hk + this.hf // Zahnhöhe
@@ -101,6 +105,26 @@ class InvoluteGear {
     
     this.s0 = this.m * (Math.PI * 0.5 + 2 * this.x * Math.tan(this.a0)) // Zahndicke
     this.sb = this.toothWidthOf(this.db, 0.0) / (this.db * 0.5)
+
+  }
+
+  norm(point) {
+
+    return Math.sqrt(point.x * point.x + point.y * point.y)
+    
+  }
+
+  dotProduct(pointA, pointB) {
+
+    return pointA.x * pointB.x + pointA.y * pointB.y
+
+  }
+
+  degreesBetweenTwoPoints(pointA, pointB) {
+
+    let angleInRad = Math.acos(this.dotProduct(pointA, pointB) / (this.norm(pointA) * this.norm(pointB)))
+
+    return 360 * angleInRad / (Math.PI * 2)
 
   }
 
@@ -206,13 +230,9 @@ class InvoluteGear {
         this.gapCenter.x = (xa + xb) * 0.5
         this.gapCenter.y = (ya + yb) * 0.5
 
-        this.toothCenterAngle = Math.acos((this.toothStart.x * this.toothCenter.x + this.toothStart.y * this.toothCenter.y) / (Math.sqrt(this.toothStart.x * this.toothStart.x + this.toothStart.y * this.toothStart.y) * Math.sqrt(this.toothCenter.x * this.toothCenter.x + this.toothCenter.y * this.toothCenter.y)))
+        this.toothCenterAngle = this.degreesBetweenTwoPoints(this.toothStart, this.toothCenter)
 
-        this.toothCenterAngle = 360 * this.toothCenterAngle / (Math.PI * 2)
-
-        this.gapCenterAngle = Math.acos((this.gapCenter.x * this.gapEnd.x + this.gapCenter.y * this.gapEnd.y) / (Math.sqrt(this.gapCenter.x * this.gapCenter.x + this.gapCenter.y * this.gapCenter.y) * Math.sqrt(this.gapEnd.x * this.gapEnd.x + this.gapEnd.y * this.gapEnd.y)))
-
-        this.gapCenterAngle = 360 * this.gapCenterAngle / (Math.PI * 2)
+        this.gapCenterAngle =this.degreesBetweenTwoPoints(this.gapCenter, this.gapEnd)
 
       }
 
@@ -238,6 +258,12 @@ class InvoluteGear {
 
   }
 
+  update() {
+
+    this.rotationAngle += (this.rotDir * this.rotationSpeed)
+
+  }
+
   translateRotate(angle, pos) {
 
     // this.displayElement.setAttribute('transform', `translate(${String(pos.x)}, ${String(pos.y)}) rotate(${String(angle * this.rotationDirection + this.rotOffset)})`)
@@ -248,29 +274,18 @@ class InvoluteGear {
 
     this.displayElement.setAttribute('transform', `translate(${String(this.centerPosition.x)}, ${String(this.centerPosition.y)}) rotate(${this.gapCenterAngle})`)
 
+  }
 
-    console.log(this.toothStart)
-    console.log(this.toothCenter)
-    console.log(this.toothEnd)
-    console.log(this.gapCenter)
-    console.log(this.gapEnd)
-    console.log(this.toothCenterAngle)
-    console.log(this.gapCenterAngle)
-    // let rot = 0.0
-    // let roDelta = (360 / this.z / 4)
-    // window.setInterval(() => {
-      
-    //   this.displayElement.setAttribute('transform', `translate(${String(this.centerPosition.x)}, ${String(this.centerPosition.y)}) rotate(${rot})`)
-    //   rot += 5
+  setPosOdd() {
 
-    // }, 100)
+    this.displayElement.setAttribute('transform', `translate(${String(this.centerPosition.x)}, ${String(this.centerPosition.y)}) rotate(${this.gapCenterAngle + this.rotationAngle})`)
 
   }
 
-  setPos() {
-    console.log(((-1) * 360 / this.z) * 0.5)
-    this.displayElement.setAttribute('transform', `translate(${String(this.centerPosition.x)}, ${String(this.centerPosition.y)}) rotate(${(-1) * this.toothCenterAngle})`)
-    // this.displayElement.setAttribute('transform', `translate(${String(this.centerPosition.x)}, ${String(this.centerPosition.y)}) rotate(${0})`)
+  setPosEven() {
+
+    this.displayElement.setAttribute('transform', `translate(${String(this.centerPosition.x)}, ${String(this.centerPosition.y)}) rotate(${(-1) * this.toothCenterAngle + this.rotationAngle})`)
+
   }
 
 
