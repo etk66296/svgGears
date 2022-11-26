@@ -52,6 +52,8 @@ class Transmission {
 
       this.distance()
 
+      console.log(this.gears)
+
     }
 
    
@@ -90,6 +92,12 @@ class Transmission {
   
   distance() {
 
+    this.gears.forEach(gear => {
+
+      gear.reset()
+
+    })
+
     if(this.gears.length == 1) {
 
       let newGear = this.gears[this.gears.length - 1]
@@ -113,10 +121,14 @@ class Transmission {
 
     if((this.gears.length % 2) == 0) {
 
+      this.gears[this.gears.length - 1].isOdd = false
+
       this.gears[this.gears.length - 1].rotDir = 1
       this.gears[this.gears.length - 1].setPosEven()
       
     } else {
+
+      this.gears[this.gears.length - 1].isOdd = true
 
       this.gears[this.gears.length - 1].rotDir = -1
       this.gears[this.gears.length - 1].setPosOdd()
@@ -222,16 +234,28 @@ class Transmission {
 
   update() {
 
-    this.gears.forEach((gear, index) => {
 
-      gear.update()
-      if((index % 2) == 0) {
-        gear.setPosEven()
+    for(let i = 0; i < this.gears.length; i++) {
+       
+      if((i % 2) == 0) {
+          
+        this.gears[i].setPosEven()
+          
       } else {
-        gear.setPosOdd()
+          
+        this.gears[i].setPosOdd()
+          
       }
+        
+      if(i > 0) {
+          
+        this.gears[i].rotationSpeed = (this.gears[i - 1].rotationSpeed * this.gears[i -1].z) / this.gears[i].z
+          
+      }
+        
+      this.gears[i].update()
+    }
 
-    })
 
   }
 

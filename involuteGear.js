@@ -52,6 +52,7 @@ class InvoluteGear {
     this.rotDir = 1
     this.rotationSpeed = 1
     this.rotationAngle = 0
+    this.isOdd = false
 
     /*
         _______________ ___ _____________ Kopfkreis dk
@@ -262,6 +263,18 @@ class InvoluteGear {
 
     this.rotationAngle += (this.rotDir * this.rotationSpeed)
 
+  }
+
+  reset() {
+    this.rotationAngle = 0.0
+
+    if(this.isOdd) {
+
+      this.setPosOdd()
+
+    } else {
+      this.setPosEven()
+    }
   }
 
   translateRotate(angle, pos) {
