@@ -10,15 +10,19 @@ class InvoluteGear {
 
     this.svg = []
 
+    this.predecessorGears = []
+
     this.displayElement = document.createElementNS("http://www.w3.org/2000/svg", 'g')
     this.parent = parent
     this.parent.appendChild(this.displayElement)
 
     this.resolution = 0.25
 
+    this.predecessorGear = null
     this.rotationDirection = 1
     this.rotOffset = 0.0
     this.centerPosition = { x: 0, y: 0 }
+    this.hasBeenRotated = false
 
     this.z = 36
     this.m = 10
@@ -52,7 +56,6 @@ class InvoluteGear {
     this.rotDir = 1
     this.rotationSpeed = 1
     this.rotationAngle = 0
-    this.isOdd = false
 
     /*
         _______________ ___ _____________ Kopfkreis dk
@@ -139,7 +142,7 @@ class InvoluteGear {
     let s = 0.0
 
     // for(let i = 0; i <= 0; i += 1) {
-    for(let i = 0; i < this.z; i += 1) {
+    for(let i = 0; i <= this.z; i += 1) {
 
       r = this.db * 0.5
       a = 0.0
@@ -202,18 +205,31 @@ class InvoluteGear {
   
       }
 
-      x = 0.5 * this.df * Math.cos(this.invDown(a) + this.sb + this.shift * i)
-      y = 0.5 * this.df * Math.sin(this.invDown(a) + this.sb + this.shift * i)
+      if(this.df * 0.5 < r) {
 
-      this.points.push({ x: x, y: y })
+        x = 0.5 * this.df * Math.cos(this.invDown(a) + this.sb + this.shift * i)
+        y = 0.5 * this.df * Math.sin(this.invDown(a) + this.sb + this.shift * i)
+        
+        this.points.push({ x: x, y: y })
+
+      }
 
       if(i == 0) {
         this.toothEnd.x = x
         this.toothEnd.y = y
       }
 
-      x = 0.5 * this.df * Math.cos(this.invUp(a) + this.shift * i + this.shift)
-      y = 0.5 * this.df * Math.sin(this.invUp(a) + this.shift * i + this.shift)
+      if(this.df * 0.5 < r) {
+
+        x = 0.5 * this.df * Math.cos(this.invUp(a) + this.shift * i + this.shift)
+        y = 0.5 * this.df * Math.sin(this.invUp(a) + this.shift * i + this.shift)
+
+      } else {
+
+        x = r * Math.cos(this.invUp(a) + this.shift * i + this.shift)
+        y = r * Math.sin(this.invUp(a) + this.shift * i + this.shift)
+
+      }
 
       this.points.push({ x: x, y: y })
 
@@ -261,26 +277,26 @@ class InvoluteGear {
 
   update() {
 
-    this.rotationAngle += (this.rotDir * this.rotationSpeed)
+    if(this.predecessorGear != null) {
+      
+      this.rotDir = -1 * this.predecessorGear.rotDir
+      this.rotationAngle += (this.rotationSpeed * this.rotDir)
+
+    } else {
+
+      this.rotationAngle += (this.rotationSpeed * this.rotDir)
+
+    }
 
   }
 
   reset() {
+
     this.rotationAngle = 0.0
 
-    if(this.isOdd) {
+    this.setPos()
 
-      this.setPosOdd()
-
-    } else {
-      this.setPosEven()
-    }
-  }
-
-  translateRotate(angle, pos) {
-
-    // this.displayElement.setAttribute('transform', `translate(${String(pos.x)}, ${String(pos.y)}) rotate(${String(angle * this.rotationDirection + this.rotOffset)})`)
-
+   
   }
 
   rotateS0() {
@@ -289,17 +305,81 @@ class InvoluteGear {
 
   }
 
-  setPosOdd() {
+  getPredecessorList(gear = this) {
 
-    this.displayElement.setAttribute('transform', `translate(${String(this.centerPosition.x)}, ${String(this.centerPosition.y)}) rotate(${this.gapCenterAngle + this.rotationAngle})`)
+    this.predecessorGears.push(gear.z % 2)
+
+    if(gear.predecessorGear != null) {
+
+      this.getPredecessorList(gear.predecessorGear)
+
+    } else {
+
+      console.log(gear.predecessorGear)
+
+    }
 
   }
 
-  setPosEven() {
+  setPos() {
+   
+    if(this.predecessorGear != null) {
 
-    this.displayElement.setAttribute('transform', `translate(${String(this.centerPosition.x)}, ${String(this.centerPosition.y)}) rotate(${(-1) * this.toothCenterAngle + this.rotationAngle})`)
+      let doRotate = false
+
+      if(!this.predecessorGear.hasBeenRotated && this.predecessorGear.z % 2 == 0 && this.z % 2 == 0) {
+
+        doRotate = true
+
+      } else if (!this.predecessorGear.hasBeenRotated && this.predecessorGear.z % 2 == 0 && this.z % 2 == 1) {
+
+        doRotate = false
+
+      } else if (!this.predecessorGear.hasBeenRotated && this.predecessorGear.z % 2 == 1 && this.z % 2 == 0) {
+
+        doRotate = true
+        
+      } else if (!this.predecessorGear.hasBeenRotated && this.predecessorGear.z % 2 == 1 && this.z % 2 == 1) {
+
+        doRotate = false
+
+      } else if (this.predecessorGear.hasBeenRotated && this.predecessorGear.z % 2 == 0 && this.z % 2 == 0) {
+        
+        doRotate = false
+        
+      } else if (this.predecessorGear.hasBeenRotated && this.predecessorGear.z % 2 == 0 && this.z % 2 == 1) {
+
+        doRotate = true
+        
+      } else if (this.predecessorGear.hasBeenRotated && this.predecessorGear.z % 2 == 1 && this.z % 2 == 0) {
+
+        doRotate = false
+        
+      } else if (this.predecessorGear.hasBeenRotated && this.predecessorGear.z % 2 == 1 && this.z % 2 == 1) {
+
+        doRotate = true
+        
+      }
+      
+      if(doRotate) {
+
+        this.displayElement.setAttribute('transform', `translate(${String(this.centerPosition.x)}, ${String(this.centerPosition.y)}) rotate(${(-1) * this.toothCenterAngle + this.rotationAngle})`)
+        this.hasBeenRotated = true
+        
+      } else {
+        
+        this.displayElement.setAttribute('transform', `translate(${String(this.centerPosition.x)}, ${String(this.centerPosition.y)}) rotate(${this.gapCenterAngle + (this.rotationAngle)})`)
+        this.hasBeenRotated = false
+
+      }
+
+    } else {
+
+      this.displayElement.setAttribute('transform', `translate(${String(this.centerPosition.x)}, ${String(this.centerPosition.y)}) rotate(${this.gapCenterAngle + this.rotationAngle})`)
+      this.hasBeenRotated = false
+
+    }
 
   }
-
 
 }

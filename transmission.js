@@ -44,15 +44,23 @@ class Transmission {
         Number(this.inputA0HtmlElem.value)
       )
 
+
       newGear.calculate()
+      
       this.gears.push(newGear)
+     
+
+      if(this.gears.length > 1) {
+
+        this.gears[this.gears.length -1].predecessorGear = this.gears[this.gears.length -2]
+
+      }
+      newGear.getPredecessorList()
 
       this.callbackOnCloseFormButton()
       newGear.draw()
 
       this.distance()
-
-      console.log(this.gears)
 
     }
 
@@ -80,7 +88,6 @@ class Transmission {
   inverseInv(a) {
 
     return Math.pow(a, 1 / 3) / (0.693357 + 0.192484 * Math.pow(a, 2 / 3))
-    // return Math.cbrt(3 * this.inv(a)) - 0.4 * this.inv(a)
 
   }
 
@@ -105,6 +112,7 @@ class Transmission {
       newGear.centerPosition.y = this.parentSvgElement.clientHeight * 0.5 - (newGear.dk * 0.5)
       this.centerY = newGear.centerPosition.y
 
+
     } else {
 
       let newGear = this.gears[this.gears.length - 1]
@@ -117,23 +125,10 @@ class Transmission {
       newGear.centerPosition.x = lastGear.centerPosition.x + gap
       newGear.centerPosition.y = lastGear.centerPosition.y
 
-    }
-
-    if((this.gears.length % 2) == 0) {
-
-      this.gears[this.gears.length - 1].isOdd = false
-
-      this.gears[this.gears.length - 1].rotDir = 1
-      this.gears[this.gears.length - 1].setPosEven()
       
-    } else {
-
-      this.gears[this.gears.length - 1].isOdd = true
-
-      this.gears[this.gears.length - 1].rotDir = -1
-      this.gears[this.gears.length - 1].setPosOdd()
-
     }
+    
+    this.gears[this.gears.length - 1].setPos()
 
   }
 
@@ -237,15 +232,7 @@ class Transmission {
 
     for(let i = 0; i < this.gears.length; i++) {
        
-      if((i % 2) == 0) {
-          
-        this.gears[i].setPosEven()
-          
-      } else {
-          
-        this.gears[i].setPosOdd()
-          
-      }
+      this.gears[i].setPos()
         
       if(i > 0) {
           
