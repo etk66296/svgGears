@@ -1,3 +1,50 @@
+class FormContainer {
+
+  constructor(parentHtmlElement, svgContainer) {
+
+    this.parentHtmlElement = parentHtmlElement
+    this.svgContainer = svgContainer
+
+    this.menuBar = document.createElementNS("http://www.w3.org/1999/xhtml", 'div')
+    this.menuBar.style.width = String(window.innerWidth) + 'px'
+    this.menuBar.style.margin = '5px'
+    this.parentHtmlElement.append(this.menuBar)
+    
+    this.newTransmissionButton = document.createElementNS("http://www.w3.org/1999/xhtml", 'button')
+    this.newTransmissionButton.innerText = 'new transmission'
+    this.menuBar.append(this.newTransmissionButton)
+
+    this.createGCode = document.createElementNS("http://www.w3.org/1999/xhtml", 'button')
+    this.createGCode.innerText = 'create G - Code'
+    this.menuBar.append(this.createGCode)
+
+    this.cutDepth = document.createElementNS("http://www.w3.org/1999/xhtml", 'input')
+    this.cutDepth.type = 'text'
+    this.menuBar.append(this.cutDepth)
+
+    this.cutLayers = document.createElementNS("http://www.w3.org/1999/xhtml", 'input')
+    this.cutLayers.type = 'text'
+    this.menuBar.append(this.cutLayers)
+
+    this.parentHtmlElement.append(this.svgContainer)
+    
+    this.transmission = new Transmission(svgContainer)
+    this.newTransmissionButton.onclick = () => {
+
+      this.transmission.showForm()
+
+    }
+
+    window.setInterval(() => {
+
+      this.transmission.update()
+
+    }, 100)
+
+  }
+
+}
+
 class TextInput {
 
   constructor(parent, label) {

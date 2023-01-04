@@ -1,12 +1,24 @@
 class InvoluteGear {
 
-  constructor(parent) {
+  constructor(parent, id, numberOfAdmissions = 4, centerRadius = 3, admissionsRadius = 6, admissionDistanceToGearCenter = 12) {
+
+    this.id = id
+    this.lineClass = 'line' + String(this.id)
 
     this.radius = 100.0
     this.psi = Math.PI / 4
 
     this.points = []
     this.edgePoints = []
+
+    this.numberOfAdmissions = numberOfAdmissions
+    this.admissionsRadius = admissionsRadius
+    this.centerRadius = centerRadius
+    this.admissionsDistanceToGearCenter = admissionDistanceToGearCenter
+    this.admissionsResolution = 100
+    this.admissionsPoints = []
+    this.centerPoints = []
+    this.admissionsCenter = []
 
     this.svg = []
 
@@ -255,6 +267,32 @@ class InvoluteGear {
 
     }
 
+    this.calculateAdmission()
+
+  }
+
+  calculateAdmission() {
+
+    for(let step = 0; step < (2 * Math.PI); step += ((2 * Math.PI / this.admissionsResolution))) {
+
+      let x = Math.cos(step)
+      let y = Math.sin(step)
+
+
+      this.admissionsPoints.push({ x: this.admissionsRadius * x, y: this.admissionsRadius * y })
+      this.centerPoints.push({ x: this.centerRadius * x, y: this.centerRadius * y })
+
+    }
+
+    for(let admissionsCenterAngle = 0; admissionsCenterAngle < (2 * Math.PI); admissionsCenterAngle += (2 * Math.PI / this.numberOfAdmissions)) {
+
+      let x = this.admissionsDistanceToGearCenter * Math.cos(admissionsCenterAngle)
+      let y = this.admissionsDistanceToGearCenter * Math.sin(admissionsCenterAngle)
+
+      this.admissionsCenter.push({ x: x, y: y })
+
+    }
+
   }
 
   draw() {
@@ -264,6 +302,7 @@ class InvoluteGear {
       if(this.points[i + 1] != undefined) {
 
         let line  = new SvgLine(this.displayElement)
+        line.setClass(this.lineClass)
         line.setLineStart(this.points[i].x, this.points[i].y)
         line.setLineEnd(this.points[i + 1].x, this.points[i + 1].y)
         line.setStrokeColor('#000000')
@@ -271,7 +310,42 @@ class InvoluteGear {
 
       }
 
-    } 
+    }
+
+    this.admissionsCenter.forEach((center) => {
+
+      for(let i = 0; i < this.admissionsPoints.length; i++) {
+
+        if(this.admissionsPoints[i + 1] != undefined) {
+
+          let line  = new SvgLine(this.displayElement)
+          line.setClass(this.lineClass)
+          line.setLineStart(this.admissionsPoints[i].x, this.admissionsPoints[i].y)
+          line.setLineEnd(this.admissionsPoints[i + 1].x, this.admissionsPoints[i + 1].y)
+          line.setStrokeColor('#000000')
+          line.setStrokeWidth(1)
+
+          line.displayElement.setAttribute('transform', `translate(${String(center.x)}, ${String(center.y)})`)
+
+        }
+
+      }
+
+    })
+    
+    for(let i = 0; i < this.centerPoints.length; i++) {
+      if(this.centerPoints[i + 1] != undefined) {
+
+        let line  = new SvgLine(this.displayElement)
+        line.setClass(this.lineClass)
+        line.setLineStart(this.centerPoints[i].x, this.centerPoints[i].y)
+        line.setLineEnd(this.centerPoints[i + 1].x, this.centerPoints[i + 1].y)
+        line.setStrokeColor('#000000')
+        line.setStrokeWidth(1)
+
+      }
+    }
+
 
   }
 

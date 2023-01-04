@@ -20,6 +20,8 @@ class Transmission {
     this.labelA0HtmlElem = null
     this.inputA0HtmlElem = null
 
+    this.gearCounter = 0
+
     this.labelMaeginRight = '50px'
     this.callbackOnCloseFormButton = () => {
 
@@ -38,7 +40,7 @@ class Transmission {
 
     this.callbackOnAddGearButton = () => {
 
-      let newGear = new InvoluteGear(this.svgDisplayElement)
+      let newGear = new InvoluteGear(this.svgDisplayElement, this.gearCounter)
       newGear.setInitialValues(Number(this.inputZHtmlElem.value),
         Number(this.inputModulHtmlElem.value),
         Number(this.inputA0HtmlElem.value)
@@ -61,6 +63,8 @@ class Transmission {
       newGear.draw()
 
       this.distance()
+
+      this.gearCounter += 1
 
     }
 

@@ -12,12 +12,17 @@ class SvgLine {
     this.setStrokeColor()
     this.setStrokeWidth()
 
-
   }
 
   setId(id = 'line') {
 
     this.displayElement.setAttribute('id',id);
+
+  }
+
+  setClass(cssClass = 'line') {
+
+    this.displayElement.setAttribute('class', cssClass)
 
   }
 
