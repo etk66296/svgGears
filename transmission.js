@@ -20,9 +20,27 @@ class Transmission {
     this.labelA0HtmlElem = null
     this.inputA0HtmlElem = null
 
+    this.numberOfAdmissionsContainerElem = null
+    this.labelNumberOfAdmissions = null
+    this.inputNumberOfAdmissions = null
+
+    this.centerRadiusContainerElem = null
+    this.labelCenterRadius = null
+    this.inputCenterRadius = null
+
+    this.admissionsRadiusContainer = null
+    this.labelAdmissionsRadius = null
+    this.inputAdmissionsRadius = null
+
+    this.admissionDistanceToGearCenterContainer = null
+    this.labelAdmissionDistanceToGearCenter = null
+    this.inputAdmissionDistanceToGearCenter = null
+
     this.gearCounter = 0
 
-    this.labelMaeginRight = '50px'
+    this.marginLeft = 20
+
+    this.labelMaeginRight = '300px'
     this.callbackOnCloseFormButton = () => {
 
       this.formContainer.removeChild(this.closeFormButton)
@@ -40,7 +58,14 @@ class Transmission {
 
     this.callbackOnAddGearButton = () => {
 
-      let newGear = new InvoluteGear(this.svgDisplayElement, this.gearCounter)
+      let newGear = new InvoluteGear(
+        this.svgDisplayElement,
+        this.gearCounter,
+        this.inputNumberOfAdmissions.value,
+        this.inputCenterRadius.value,
+        this.inputAdmissionsRadius.value,
+        this.inputAdmissionDistanceToGearCenter.value
+      )
       newGear.setInitialValues(Number(this.inputZHtmlElem.value),
         Number(this.inputModulHtmlElem.value),
         Number(this.inputA0HtmlElem.value)
@@ -112,7 +137,7 @@ class Transmission {
     if(this.gears.length == 1) {
 
       let newGear = this.gears[this.gears.length - 1]
-      newGear.centerPosition.x = newGear.dk * 0.5
+      newGear.centerPosition.x = newGear.dk * 0.5 + this.marginLeft
       newGear.centerPosition.y = this.parentSvgElement.clientHeight * 0.5 - (newGear.dk * 0.5)
       this.centerY = newGear.centerPosition.y
 
@@ -222,11 +247,85 @@ class Transmission {
     this.a0ContainerHtmlElem.append(this.inputA0HtmlElem)
     this.formContainer.append(this.a0ContainerHtmlElem)
 
+    // numberOfAdmissions
+    this.numberOfAdmissionsContainerElem = this.newHtmlElem()
+    this.numberOfAdmissionsContainerElem.style.margin = '10px'
+    this.labelNumberOfAdmissions = this.newHtmlElem()
+    this.labelNumberOfAdmissions.style.color = '#ffffff'
+    this.labelNumberOfAdmissions.style.display = 'inline-block'
+    this.labelNumberOfAdmissions.style.marginRight = '10px'
+    this.labelNumberOfAdmissions.style.width = this.labelMaeginRight
+    this.labelNumberOfAdmissions.innerText = 'number of admission: '
+    this.numberOfAdmissionsContainerElem.append(this.labelNumberOfAdmissions)
+
+    this.inputNumberOfAdmissions = this.newHtmlElem('input')
+    this.inputNumberOfAdmissions.style.display = 'inline-block'
+    this.inputNumberOfAdmissions.innerText = 'modul'
+    this.inputNumberOfAdmissions.value = '4'
+    this.numberOfAdmissionsContainerElem.append(this.inputNumberOfAdmissions)
+    this.formContainer.append(this.numberOfAdmissionsContainerElem)
+
+    // centerRadius
+    this.centerRadiusContainerElem = this.newHtmlElem()
+    this.centerRadiusContainerElem.style.margin = '10px'
+    this.labelNumberOfAdmissions = this.newHtmlElem()
+    this.labelNumberOfAdmissions.style.color = '#ffffff'
+    this.labelNumberOfAdmissions.style.display = 'inline-block'
+    this.labelNumberOfAdmissions.style.marginRight = '10px'
+    this.labelNumberOfAdmissions.style.width = this.labelMaeginRight
+    this.labelNumberOfAdmissions.innerText = 'center radius: '
+    this.centerRadiusContainerElem.append(this.labelNumberOfAdmissions)
+
+    this.inputCenterRadius = this.newHtmlElem('input')
+    this.inputCenterRadius.style.display = 'inline-block'
+    this.inputCenterRadius.innerText = 'modul'
+    this.inputCenterRadius.value = '3'
+    this.centerRadiusContainerElem.append(this.inputCenterRadius)
+    this.formContainer.append(this.centerRadiusContainerElem)
+
+    // admissionsRadius
+    this.admissionsRadiusContainer = this.newHtmlElem()
+    this.admissionsRadiusContainer.style.margin = '10px'
+    this.labelAdmissionsRadius = this.newHtmlElem()
+    this.labelAdmissionsRadius.style.color = '#ffffff'
+    this.labelAdmissionsRadius.style.display = 'inline-block'
+    this.labelAdmissionsRadius.style.marginRight = '10px'
+    this.labelAdmissionsRadius.style.width = this.labelMaeginRight
+    this.labelAdmissionsRadius.innerText = 'admission radius: '
+    this.admissionsRadiusContainer.append(this.labelAdmissionsRadius)
+
+    this.inputAdmissionsRadius = this.newHtmlElem('input')
+    this.inputAdmissionsRadius.style.display = 'inline-block'
+    this.inputAdmissionsRadius.innerText = 'modul'
+    this.inputAdmissionsRadius.value = '3'
+    this.admissionsRadiusContainer.append(this.inputAdmissionsRadius)
+    this.formContainer.append(this.admissionsRadiusContainer)
+
+    // admissionDistanceToGearCenter
+    this.admissionDistanceToGearCenterContainer = this.newHtmlElem()
+    this.admissionDistanceToGearCenterContainer.style.margin = '10px'
+    this.labelAdmissionDistanceToGearCenter = this.newHtmlElem()
+    this.labelAdmissionDistanceToGearCenter.style.color = '#ffffff'
+    this.labelAdmissionDistanceToGearCenter.style.display = 'inline-block'
+    this.labelAdmissionDistanceToGearCenter.style.marginRight = '10px'
+    this.labelAdmissionDistanceToGearCenter.style.width = this.labelMaeginRight
+    this.labelAdmissionDistanceToGearCenter.innerText = 'admission distance to gear center: '
+    this.admissionDistanceToGearCenterContainer.append(this.labelAdmissionDistanceToGearCenter)
+
+    this.inputAdmissionDistanceToGearCenter = this.newHtmlElem('input')
+    this.inputAdmissionDistanceToGearCenter.style.display = 'inline-block'
+    this.inputAdmissionDistanceToGearCenter.innerText = 'modul'
+    this.inputAdmissionDistanceToGearCenter.value = '12'
+    this.admissionDistanceToGearCenterContainer.append(this.inputAdmissionDistanceToGearCenter)
+    this.formContainer.append(this.admissionDistanceToGearCenterContainer)
+
     this.addGearButton = this.newHtmlElem('button')
     this.addGearButton.innerText = 'add'
     this.addGearButton.style.marginLeft = '10px'
     this.addGearButton.onclick = this.callbackOnAddGearButton
     this.formContainer.append(this.addGearButton)
+
+    
 
 
   }
