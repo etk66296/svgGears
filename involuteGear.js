@@ -22,7 +22,9 @@ class InvoluteGear {
 
     this.svg = []
 
+
     this.predecessorGears = []
+    this.transmissionPointer = null
 
     this.displayElement = document.createElementNS("http://www.w3.org/2000/svg", 'g')
     this.parent = parent
@@ -68,6 +70,8 @@ class InvoluteGear {
     this.rotDir = 1
     this.rotationSpeed = 1
     this.rotationAngle = 0
+
+    this.selectCricle = new svgCircle(this.displayElement, 0.5 * this.db)
 
     /*
         _______________ ___ _____________ Kopfkreis dk
@@ -269,6 +273,8 @@ class InvoluteGear {
 
     this.calculateAdmission()
 
+    this.selectCricle.setRadius(this.db * 0.5)
+
   }
 
   calculateAdmission() {
@@ -344,6 +350,11 @@ class InvoluteGear {
         line.setStrokeWidth(1)
 
       }
+    }
+
+    this.selectCricle.displayElement.onclick = () => {
+
+      this.setBackgroundColor()
     }
 
 
@@ -453,6 +464,21 @@ class InvoluteGear {
       this.hasBeenRotated = false
 
     }
+
+  }
+
+  setBackgroundColor() {
+
+    this.transmissionPointer.forEach((gear) => {
+      gear.resetBackgroundColor()
+    })
+    this.selectCricle.setFillColor('rgb(95, 168, 250)')
+
+  }
+
+  resetBackgroundColor() {
+
+    this.selectCricle.setFillColor()
 
   }
 

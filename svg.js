@@ -69,6 +69,7 @@ class svgCircle {
     this.setRadius(radius) 
     this.setStrokeColor()
     this.setStrokeWidth()
+    this.setFillColor()
 
   }
 
@@ -103,7 +104,13 @@ class svgCircle {
 
   }
 
-  setStrokeWidth(width = '1') {
+  setFillColor(color = 'rgb(117, 180, 252)') {
+
+    this.displayElement.setAttribute("fill", color)
+
+  }
+
+  setStrokeWidth(width = '0') {
 
     this.displayElement.setAttribute("stroke-width", width)
 

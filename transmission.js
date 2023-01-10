@@ -75,6 +75,8 @@ class Transmission {
       newGear.calculate()
       
       this.gears.push(newGear)
+
+      newGear.transmissionPointer = this.gears
      
 
       if(this.gears.length > 1) {
