@@ -72,6 +72,7 @@ class InvoluteGear {
     this.rotationAngle = 0
 
     this.selectCricle = new svgCircle(this.displayElement, 0.5 * this.db)
+    this.isSelected = false
 
     /*
         _______________ ___ _____________ Kopfkreis dk
@@ -158,7 +159,7 @@ class InvoluteGear {
     let s = 0.0
 
     // for(let i = 0; i <= 0; i += 1) {
-    for(let i = 0; i <= this.z; i += 1) {
+    for(let i = 0; i < this.z; i += 1) {
 
       r = this.db * 0.5
       a = 0.0
@@ -270,6 +271,8 @@ class InvoluteGear {
       }
 
     }
+
+    this.points.push({ x: this.points[0].x, y: this.points[0].y })
 
     this.calculateAdmission()
 
@@ -472,11 +475,16 @@ class InvoluteGear {
     this.transmissionPointer.forEach((gear) => {
       gear.resetBackgroundColor()
     })
+    
     this.selectCricle.setFillColor('rgb(95, 168, 250)')
+
+    this.isSelected = true
 
   }
 
   resetBackgroundColor() {
+
+    this.isSelected = false
 
     this.selectCricle.setFillColor()
 
